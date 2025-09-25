@@ -72,7 +72,3 @@ Once the server is running, navigate to
 http://12.0.0.1:8000/docs in your browser. This provides an interactive Swagger UI where you can test all the API endpoints directly.
 
 ---
-
-With the `README.md` file created, the core project is 100% complete.
-
-Shall we tackle the optional bonus feature of adding filtering to the `GET /users` endpoint next?
