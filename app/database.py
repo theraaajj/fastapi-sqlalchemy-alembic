@@ -2,8 +2,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-# Make sure this matches your alembic.ini file
-DATABASE_URL = "postgresql://postgres:thisisme2010@localhost/first-db"
+## this should match our alembic.ini file
+DATABASE_URL = "postgresql://postgres:db_pswrd@localhost/first-db"
 
 engine = create_engine(DATABASE_URL)
 
