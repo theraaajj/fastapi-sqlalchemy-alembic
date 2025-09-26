@@ -15,7 +15,7 @@ This project is a simple user management API built with FastAPI, PostgreSQL, SQL
 
 1.  **Clone the Repository**
     ```bash
-    git clone <your-repo-url>
+    git clone https://github.com/theraaajj/fastapi-sqlalchemy-alembic
     cd fastapi_user_project
     ```
 
