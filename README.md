@@ -209,15 +209,15 @@ This was a group of errors related to setting up Alembic to talk to our database
 
 - **Diagnosis**: This was our first major bug. The error message indicated that Alembic didn't recognize the database "dialect" named driver.
 
-- **Resolution**: We identified that the sqlalchemy.url in the alembic.ini file contained a placeholder. The fix was to replace driver:// with the correct postgresql:// connection string.
+- **Resolution**: We identified that the `sqlalchemy.url` in the `alembic.ini` file contained a placeholder. The fix was to replace `driver://` with the correct `postgresql://` connection string.
 
-**The Bug**: Alembic couldn't find the MetaData object when using --autogenerate.
+**The Bug**: Alembic couldn't find the MetaData object when using `--autogenerate`.
 
 - **Diagnosis**: This meant Alembic was connected to the database but had no idea what our Python models looked like, so it couldn't compare them.
 
 - **Resolution**: We had to edit alembic/env.py. The fix involved adding code to tell Python where our app folder was and then setting target_metadata = Base.metadata to link Alembic to our SQLAlchemy models.
 
-**The Bug**: InterpolationSyntaxError in alembic.ini after URL-encoding a password.
+**The Bug**: `InterpolationSyntaxError` in `alembic.ini` after URL-encoding a password.
 
 - **Diagnosis**: The % symbol in the URL-encoded password was being misinterpreted by the .ini file parser as a variable.
 
@@ -226,31 +226,31 @@ This was a group of errors related to setting up Alembic to talk to our database
 ### 2. File System and Editor Issues
 This was the most persistent and tricky set of bugs, as they weren't caused by code but by the development environment itself.
 
-**The Bug**: The MetaData error continued even after we corrected the env.py file.
+**The Bug**: The `MetaData` error continued even after we corrected the `env.py` file.
 
-- **Diagnosis**: This was a critical lesson. We moved from checking the code to checking the file system. By running type alembic\env.py in the terminal, we got definitive proof that the file had not been saved correctly, even though it looked right in the editor.
+- **Diagnosis**: This was a critical lesson. We moved from checking the code to checking the file system. By running type `alembic\env.py` in the terminal, we got definitive proof that the file had not been saved correctly, even though it looked right in the editor.
 
 - **Resolution**: We forced the file to save by running the editor as an administrator and using the "Save As..." command to overwrite the old file.
 
-**The Bug**: An ImportError where Base couldn't be imported, even with the correct code.
+**The Bug**: An `ImportError` where Base couldn't be imported, even with the correct code.
 
-- **Diagnosis**: We used the same type command diagnostic on app/database.py and app/models.py. The result showed that app/database.py was completely empty on the disk.
+- **Diagnosis**: We used the same type command diagnostic on `app/database.py` and `app/models.py`. The result showed that `app/database.py` was completely empty on the disk.
 
-- **Resolution**: We deleted the corrupted, empty file and created a new database.py with the correct code, which finally fixed the import chain.
+- **Resolution**: We deleted the corrupted, empty file and created a new `database.py` with the correct code, which finally fixed the import chain.
 
 ### 3. Database Integrity Errors
 These errors came from the database itself, rejecting operations that violated its rules.
 
-**The Bug**: NotNullViolation on the id column when creating a new user.
+**The Bug**: `NotNullViolation` on the id column when creating a new user.
 
 - **Diagnosis**: The full traceback from the Uvicorn terminal showed the database was trying to insert a NULL value for the id, which is a forbidden operation for a primary key. This meant the auto-increment feature was not working.
 
 - **Resolution**: We created a new Alembic migration that manually added the auto-incrementing sequence to the id column of the users table in the database, correcting the initial setup.
 
-**The Bug**: The alembic downgrade command didn't remove the new columns.
+**The Bug**: The alembic `downgrade` command didn't remove the new columns.
 
-- **Diagnosis**: We discovered that while the upgrade() function was correct, the corresponding downgrade() function in the migration script was empty. Alembic didn't know how to reverse the change.
+- **Diagnosis**: We discovered that while the `upgrade()` function was correct, the corresponding `downgrade()` function in the migration script was empty. Alembic didn't know how to reverse the change.
 
-- **Resolution**: We manually edited the downgrade() function in the migration script to include the op.drop_column() commands, providing an explicit set of instructions for the rollback.
+- **Resolution**: We manually edited the `downgrade()` function in the migration script to include the `op.drop_column()` commands, providing an explicit set of instructions for the rollback.
 
 ---
